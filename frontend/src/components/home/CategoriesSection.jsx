@@ -1,7 +1,6 @@
 import { Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import SectionHeader from '../ui/SectionHeader';
-import ProductGridSkeleton from '../ui/ProductGridSkeleton';
 import { useGetProductCategoriesQuery } from '../../slices/productsApiSlice';
 import { CATEGORY_META, categoryToSlug } from '../../constants/productCategories';
 
