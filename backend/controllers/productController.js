@@ -2,6 +2,16 @@ import asyncHandler from '../middleware/asyncHandler.js';
 import Product from '../models/productModel.js';
 import { LIST_PRODUCT_FIELDS, TOP_PRODUCT_FIELDS } from '../utils/queryFields.js';
 import interleaveProductsByBrand from '../utils/interleaveProductsByBrand.js';
+import { getReviewEligibilityForUser } from '../utils/reviewEligibility.js';
+
+const recalculateProductRating = (product) => {
+  product.numReviews = product.reviews.length;
+  product.rating =
+    product.reviews.length === 0
+      ? 0
+      : product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        product.reviews.length;
+};
 
 const DEFAULT_PAGE_SIZE = 8;
 
@@ -128,7 +138,39 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Create new review
+// @desc    Check if logged-in user can review a product
+// @route   GET /api/products/:id/reviews/eligibility
+// @access  Private
+const getReviewEligibility = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id).select('reviews').lean();
+
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  const eligibility = await getReviewEligibilityForUser(
+    req.user._id,
+    req.params.id
+  );
+
+  const existingReview = product.reviews.find(
+    (review) => review.user.toString() === req.user._id.toString()
+  );
+
+  res.json({
+    ...eligibility,
+    ...(existingReview && {
+      existingReview: {
+        _id: existingReview._id,
+        rating: existingReview.rating,
+        comment: existingReview.comment,
+      },
+    }),
+  });
+});
+
+// @desc    Create or update a verified purchase review
 // @route   POST /api/products/:id/reviews
 // @access  Private
 const createProductReview = asyncHandler(async (req, res) => {
@@ -136,37 +178,45 @@ const createProductReview = asyncHandler(async (req, res) => {
 
   const product = await Product.findById(req.params.id);
 
-  if (product) {
-    const alreadyReviewed = product.reviews.find(
-      (r) => r.user.toString() === req.user._id.toString()
-    );
-
-    if (alreadyReviewed) {
-      res.status(400);
-      throw new Error('Product already reviewed');
-    }
-
-    const review = {
-      name: req.user.name,
-      rating: Number(rating),
-      comment,
-      user: req.user._id,
-    };
-
-    product.reviews.push(review);
-
-    product.numReviews = product.reviews.length;
-
-    product.rating =
-      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
-      product.reviews.length;
-
-    await product.save();
-    res.status(201).json({ message: 'Review added' });
-  } else {
+  if (!product) {
     res.status(404);
     throw new Error('Product not found');
   }
+
+  const eligibility = await getReviewEligibilityForUser(
+    req.user._id,
+    req.params.id
+  );
+
+  if (!eligibility.canReview) {
+    res.status(403);
+    throw new Error('You can review this product only after receiving your order.');
+  }
+
+  const existingReview = product.reviews.find(
+    (r) => r.user.toString() === req.user._id.toString()
+  );
+
+  if (existingReview) {
+    existingReview.name = req.user.name;
+    existingReview.rating = Number(rating);
+    existingReview.comment = comment;
+
+    recalculateProductRating(product);
+    await product.save();
+    return res.json({ message: 'Review updated' });
+  }
+
+  product.reviews.push({
+    name: req.user.name,
+    rating: Number(rating),
+    comment,
+    user: req.user._id,
+  });
+
+  recalculateProductRating(product);
+  await product.save();
+  res.status(201).json({ message: 'Review added' });
 });
 
 // @desc    Get top rated products
@@ -205,6 +255,7 @@ export {
   createProduct,
   updateProduct,
   deleteProduct,
+  getReviewEligibility,
   createProductReview,
   getTopProducts,
   getProductCategories,

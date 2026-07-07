@@ -6,6 +6,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getReviewEligibility,
   createProductReview,
   getTopProducts,
   getProductCategories,
@@ -16,6 +17,9 @@ import checkObjectId from '../middleware/checkObjectId.js';
 router.route('/').get(getProducts).post(protect, adminOnly, createProduct);
 router.get('/categories', getProductCategories);
 router.get('/top', getTopProducts);
+router
+  .route('/:id/reviews/eligibility')
+  .get(protect, checkObjectId, getReviewEligibility);
 router.route('/:id/reviews').post(protect, checkObjectId, createProductReview);
 router
   .route('/:id')

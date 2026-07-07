@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, Form } from 'react-bootstrap';
@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import {
   useGetProductDetailsQuery,
   useCreateReviewMutation,
+  useGetReviewEligibilityQuery,
   useDeleteProductMutation,
   useGetProductsQuery,
 } from '../slices/productsApiSlice';
@@ -48,7 +49,21 @@ const ProductScreen = () => {
 
   const [createReview, { isLoading: loadingProductReview }] =
     useCreateReviewMutation();
+  const { data: reviewEligibility, isLoading: loadingReviewEligibility } =
+    useGetReviewEligibilityQuery(productId, {
+      skip: !userInfo || adminView,
+    });
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
+
+  const existingReview = reviewEligibility?.existingReview;
+  const isEditingReview = Boolean(existingReview);
+
+  useEffect(() => {
+    if (existingReview) {
+      setRating(existingReview.rating);
+      setComment(existingReview.comment);
+    }
+  }, [existingReview]);
 
   const images = product ? [product.image, product.image, product.image] : [];
 
@@ -67,12 +82,77 @@ const ProductScreen = () => {
     try {
       await createReview({ productId, rating, comment }).unwrap();
       refetch();
-      toast.success('Review created successfully');
-      setComment('');
-      setRating(0);
+      toast.success(
+        isEditingReview ? 'Review updated successfully' : 'Review created successfully'
+      );
+      if (!isEditingReview) {
+        setComment('');
+        setRating(0);
+      }
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
+  };
+
+  const getReviewFormMessage = () => {
+    if (!userInfo) {
+      return (
+        <Message>
+          Please <Link to='/login' className='text-link'>sign in</Link> to write a review
+        </Message>
+      );
+    }
+
+    if (loadingReviewEligibility) {
+      return <Loader size='small' />;
+    }
+
+    if (!reviewEligibility?.canReview) {
+      if (reviewEligibility?.reason === 'Product not purchased') {
+        return (
+          <Message>
+            Reviews are available only after you receive this product.
+          </Message>
+        );
+      }
+
+      if (reviewEligibility?.reason === 'Order not delivered') {
+        return (
+          <Message>
+            You can review this product after it has been delivered.
+          </Message>
+        );
+      }
+
+      return (
+        <Message>
+          Reviews are available only after you receive this product.
+        </Message>
+      );
+    }
+
+    return (
+      <Form onSubmit={submitHandler}>
+        <Form.Group className='mb-3'>
+          <Form.Label>Rating</Form.Label>
+          <Form.Select className='form-control-modern' required value={rating} onChange={(e) => setRating(e.target.value)}>
+            <option value=''>Select rating...</option>
+            <option value='1'>1 - Poor</option>
+            <option value='2'>2 - Fair</option>
+            <option value='3'>3 - Good</option>
+            <option value='4'>4 - Very Good</option>
+            <option value='5'>5 - Excellent</option>
+          </Form.Select>
+        </Form.Group>
+        <Form.Group className='mb-3'>
+          <Form.Label>Comment</Form.Label>
+          <Form.Control as='textarea' rows={3} className='form-control-modern' required value={comment} onChange={(e) => setComment(e.target.value)} />
+        </Form.Group>
+        <button type='submit' className='btn-accent' disabled={loadingProductReview}>
+          {isEditingReview ? 'Update Review' : 'Submit Review'}
+        </button>
+      </Form>
+    );
   };
 
   const handleDeleteProduct = async () => {
@@ -216,32 +296,11 @@ const ProductScreen = () => {
 
             {!adminView && (
               <div className='card-surface card-surface--flat card-surface__body mt-4'>
-                <h5 className='card-surface__title'>Write a Review</h5>
+                <h5 className='card-surface__title'>
+                  {isEditingReview ? 'Edit Your Review' : 'Write a Review'}
+                </h5>
                 {loadingProductReview && <Loader size='small' />}
-                {userInfo ? (
-                  <Form onSubmit={submitHandler}>
-                    <Form.Group className='mb-3'>
-                      <Form.Label>Rating</Form.Label>
-                      <Form.Select className='form-control-modern' required value={rating} onChange={(e) => setRating(e.target.value)}>
-                        <option value=''>Select rating...</option>
-                        <option value='1'>1 - Poor</option>
-                        <option value='2'>2 - Fair</option>
-                        <option value='3'>3 - Good</option>
-                        <option value='4'>4 - Very Good</option>
-                        <option value='5'>5 - Excellent</option>
-                      </Form.Select>
-                    </Form.Group>
-                    <Form.Group className='mb-3'>
-                      <Form.Label>Comment</Form.Label>
-                      <Form.Control as='textarea' rows={3} className='form-control-modern' required value={comment} onChange={(e) => setComment(e.target.value)} />
-                    </Form.Group>
-                    <button type='submit' className='btn-accent' disabled={loadingProductReview}>Submit Review</button>
-                  </Form>
-                ) : (
-                  <Message>
-                    Please <Link to='/login' className='text-link'>sign in</Link> to write a review
-                  </Message>
-                )}
+                {getReviewFormMessage()}
               </div>
             )}
           </section>

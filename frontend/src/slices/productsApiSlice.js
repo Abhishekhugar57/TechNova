@@ -68,7 +68,16 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, { productId }) => [
         { type: 'Product', id: productId },
+        { type: 'Product', id: `${productId}-review-eligibility` },
         { type: 'Products', id: 'LIST' },
+      ],
+    }),
+    getReviewEligibility: builder.query({
+      query: (productId) => ({
+        url: `${PRODUCTS_URL}/${productId}/reviews/eligibility`,
+      }),
+      providesTags: (result, error, productId) => [
+        { type: 'Product', id: `${productId}-review-eligibility` },
       ],
     }),
     getTopProducts: builder.query({
@@ -90,6 +99,7 @@ export const {
   useUploadProductImageMutation,
   useDeleteProductMutation,
   useCreateReviewMutation,
+  useGetReviewEligibilityQuery,
   useGetTopProductsQuery,
   useGetProductCategoriesQuery,
 } = productsApiSlice;
