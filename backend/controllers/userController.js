@@ -1,5 +1,5 @@
 import asyncHandler from '../middleware/asyncHandler.js';
-import generateToken from '../utils/generateToken.js';
+import generateToken, { clearAuthCookie } from '../utils/generateToken.js';
 import User from '../models/userModel.js';
 import { formatUserResponse, resolveUserRole } from '../utils/userResponse.js';
 import { findUserByEmail, normalizeEmail } from '../utils/emailUtils.js';
@@ -16,9 +16,9 @@ const authUser = asyncHandler(async (req, res) => {
 
   if (user && (await user.matchPassword(password))) {
     const role = resolveUserRole(user);
-    generateToken(res, user._id, role);
+    const token = generateToken(res, user._id, role);
 
-    res.json(formatUserResponse(user));
+    res.json({ ...formatUserResponse(user), token });
   } else {
     res.status(401);
     throw new Error('Invalid email or password');
@@ -49,9 +49,9 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    generateToken(res, user._id, user.role);
+    const token = generateToken(res, user._id, user.role);
 
-    res.status(201).json(formatUserResponse(user));
+    res.status(201).json({ ...formatUserResponse(user), token });
   } else {
     res.status(400);
     throw new Error('Invalid user data');
@@ -59,7 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = (req, res) => {
-  res.clearCookie('jwt');
+  clearAuthCookie(res);
   res.status(200).json({ message: 'Logged out successfully' });
 };
 

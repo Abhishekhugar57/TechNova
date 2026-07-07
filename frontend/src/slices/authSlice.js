@@ -14,12 +14,17 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.userInfo = normalizeUserInfo(action.payload);
+      const { token, ...userInfo } = action.payload;
+      state.userInfo = normalizeUserInfo(userInfo);
       localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
+      if (token) {
+        localStorage.setItem('jwtToken', token);
+      }
     },
     logout: (state) => {
       state.userInfo = null;
-      localStorage.clear();
+      localStorage.removeItem('userInfo');
+      localStorage.removeItem('jwtToken');
     },
   },
 });
