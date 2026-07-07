@@ -6,13 +6,6 @@ import { logout } from './authSlice';
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   credentials: 'include',
-  prepareHeaders: (headers) => {
-    const token = localStorage.getItem('jwtToken');
-    if (token) {
-      headers.set('authorization', `Bearer ${token}`);
-    }
-    return headers;
-  },
 });
 
 const isAuthRequest = (args) => {

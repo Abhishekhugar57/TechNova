@@ -16,9 +16,9 @@ const authUser = asyncHandler(async (req, res) => {
 
   if (user && (await user.matchPassword(password))) {
     const role = resolveUserRole(user);
-    const token = generateToken(res, user._id, role);
+    generateToken(res, user._id, role);
 
-    res.json({ ...formatUserResponse(user), token });
+    res.json(formatUserResponse(user));
   } else {
     res.status(401);
     throw new Error('Invalid email or password');
@@ -49,9 +49,9 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const token = generateToken(res, user._id, user.role);
+    generateToken(res, user._id, user.role);
 
-    res.status(201).json({ ...formatUserResponse(user), token });
+    res.status(201).json(formatUserResponse(user));
   } else {
     res.status(400);
     throw new Error('Invalid user data');

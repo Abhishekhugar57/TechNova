@@ -6,7 +6,8 @@ const getCookieOptions = () => {
   return {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'none' : 'lax',
+    sameSite: 'lax',
+    path: '/',
     maxAge: 30 * 24 * 60 * 60 * 1000,
   };
 };
@@ -17,8 +18,6 @@ const generateToken = (res, userId, role) => {
   });
 
   res.cookie('jwt', token, getCookieOptions());
-
-  return token;
 };
 
 export const clearAuthCookie = (res) => {

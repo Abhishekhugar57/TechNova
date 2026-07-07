@@ -3,21 +3,8 @@ import asyncHandler from './asyncHandler.js';
 import User from '../models/userModel.js';
 import { resolveUserRole } from '../utils/userResponse.js';
 
-const getTokenFromRequest = (req) => {
-  if (req.cookies.jwt) {
-    return req.cookies.jwt;
-  }
-
-  const authHeader = req.headers.authorization;
-  if (authHeader?.startsWith('Bearer ')) {
-    return authHeader.split(' ')[1];
-  }
-
-  return null;
-};
-
 const protect = asyncHandler(async (req, res, next) => {
-  const token = getTokenFromRequest(req);
+  const token = req.cookies.jwt;
 
   if (!token) {
     res.status(401);
