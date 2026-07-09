@@ -11,6 +11,7 @@ import OrderSummary from '../components/ui/OrderSummary';
 import ProductImage from '../components/ProductImage';
 import { useCreateOrderMutation } from '../slices/ordersApiSlice';
 import { clearCartItems } from '../slices/cartSlice';
+import { formatPrice } from '../utils/currencyUtils';
 
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
@@ -75,10 +76,10 @@ const PlaceOrderScreen = () => {
                       {item.name}
                     </Link>
                     <div className='text-muted-custom' style={{ fontSize: '0.875rem' }}>
-                      {item.qty} x ${item.price}
+                      {item.qty} x {formatPrice(item.price)}
                     </div>
                   </div>
-                  <strong>${((item.qty * item.price * 100) / 100).toFixed(2)}</strong>
+                  <strong>{formatPrice(item.qty * item.price)}</strong>
                 </div>
               ))
             )}
@@ -88,11 +89,11 @@ const PlaceOrderScreen = () => {
         <Col lg={4}>
           <OrderSummary
             rows={[
-              ['Items', `$${cart.itemsPrice}`],
-              ['Shipping', `$${cart.shippingPrice}`],
-              ['Tax', `$${cart.taxPrice}`],
+              ['Items', formatPrice(cart.itemsPrice)],
+              ['Shipping', formatPrice(cart.shippingPrice)],
+              ['Tax', formatPrice(cart.taxPrice)],
             ]}
-            total={['Total', `$${cart.totalPrice}`]}
+            total={['Total', formatPrice(cart.totalPrice)]}
           >
             {error && <Message variant='danger'>{error.data.message}</Message>}
             <button

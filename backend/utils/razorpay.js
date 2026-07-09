@@ -5,9 +5,7 @@ import Order from '../models/orderModel.js';
 
 dotenv.config();
 
-// Indian Razorpay accounts require INR; USD orders trigger international card errors.
 const PAYMENT_CURRENCY = 'INR';
-const USD_TO_INR_RATE = Number(process.env.RAZORPAY_USD_TO_INR_RATE) || 84;
 
 const getRazorpayCredentials = () => ({
   keyId: process.env.RAZORPAY_KEY_ID,
@@ -27,8 +25,8 @@ const getRazorpayInstance = () => {
   });
 };
 
-const toRazorpayAmount = (usdAmount) =>
-  Math.round(Number(usdAmount) * USD_TO_INR_RATE * 100);
+const toRazorpayAmount = (inrAmount) =>
+  Math.round(Number(inrAmount) * 100);
 
 export const isRazorpayConfigured = () => {
   const { keyId, keySecret } = getRazorpayCredentials();
@@ -37,7 +35,7 @@ export const isRazorpayConfigured = () => {
 
 export const getRazorpayKeyId = () => getRazorpayCredentials().keyId;
 
-export const createRazorpayOrder = async (usdAmount, receipt) => {
+export const createRazorpayOrder = async (inrAmount, receipt) => {
   const razorpay = getRazorpayInstance();
 
   if (!razorpay) {
@@ -45,7 +43,7 @@ export const createRazorpayOrder = async (usdAmount, receipt) => {
   }
 
   return razorpay.orders.create({
-    amount: toRazorpayAmount(usdAmount),
+    amount: toRazorpayAmount(inrAmount),
     currency: PAYMENT_CURRENCY,
     receipt,
   });
@@ -77,4 +75,4 @@ export const checkIfNewRazorpayPayment = async (paymentId) => {
   return !existingOrder;
 };
 
-export { PAYMENT_CURRENCY, USD_TO_INR_RATE, toRazorpayAmount };
+export { PAYMENT_CURRENCY, toRazorpayAmount };

@@ -1,8 +1,14 @@
 import { Row, Col } from 'react-bootstrap';
 import { FaShippingFast, FaShieldAlt, FaUndo, FaHeadset } from 'react-icons/fa';
 
+import { formatPrice, FREE_SHIPPING_THRESHOLD } from '../../utils/currencyUtils';
+
 const benefits = [
-  { icon: FaShippingFast, title: 'Free Shipping', text: 'On orders over $100' },
+  {
+    icon: FaShippingFast,
+    title: 'Free Shipping',
+    text: `On orders over ${formatPrice(FREE_SHIPPING_THRESHOLD)}`,
+  },
   { icon: FaShieldAlt, title: 'Secure Payment', text: '100% protected checkout' },
   { icon: FaUndo, title: 'Easy Returns', text: '30-day return policy' },
   { icon: FaHeadset, title: '24/7 Support', text: 'Dedicated customer care' },

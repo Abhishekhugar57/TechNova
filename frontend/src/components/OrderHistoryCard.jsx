@@ -8,6 +8,7 @@ import {
   isActiveOrder,
   getTrackingProgress,
 } from '../constants/orderTracking';
+import { formatPrice } from '../utils/currencyUtils';
 
 const OrderHistoryCard = ({ order }) => {
   const firstItem = order.orderItems?.[0];
@@ -45,7 +46,7 @@ const OrderHistoryCard = ({ order }) => {
                 {itemCount} item{itemCount === 1 ? '' : 's'}
                 {extraItems > 0 && ` · +${extraItems} more product${extraItems === 1 ? '' : 's'}`}
               </p>
-              <p className='order-history-card__total'>${order.totalPrice.toFixed(2)}</p>
+              <p className='order-history-card__total'>{formatPrice(order.totalPrice)}</p>
             </div>
           </div>
         )}

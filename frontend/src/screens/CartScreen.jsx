@@ -7,6 +7,11 @@ import PageHeader from '../components/ui/PageHeader';
 import OrderSummary from '../components/ui/OrderSummary';
 import ProductImage from '../components/ProductImage';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
+import {
+  formatPrice,
+  FREE_SHIPPING_THRESHOLD,
+  SHIPPING_COST,
+} from '../utils/currencyUtils';
 
 const CartScreen = () => {
   const navigate = useNavigate();
@@ -15,7 +20,7 @@ const CartScreen = () => {
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0);
   const itemCount = cartItems.reduce((a, i) => a + i.qty, 0);
-  const shipping = subtotal > 100 ? 0 : 10;
+  const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
 
   const updateQty = (item, newQty) => {
     if (newQty >= 1 && newQty <= item.countInStock) {
@@ -54,10 +59,10 @@ const CartScreen = () => {
                       {item.name}
                     </Link>
                     <div className='cart-item__unit-price'>
-                      ${item.price} each
+                      {formatPrice(item.price)} each
                     </div>
                   </div>
-                  <div className='d-none d-md-block fw-semibold'>${item.price}</div>
+                  <div className='d-none d-md-block fw-semibold'>{formatPrice(item.price)}</div>
                   <div>
                     <div className='qty-selector'>
                       <button
@@ -80,7 +85,7 @@ const CartScreen = () => {
                     </div>
                   </div>
                   <div className='fw-bold d-none d-md-block'>
-                    ${(item.qty * item.price).toFixed(2)}
+                    {formatPrice(item.qty * item.price)}
                   </div>
                   <button
                     type='button'
@@ -98,10 +103,10 @@ const CartScreen = () => {
           <Col lg={4}>
             <OrderSummary
               rows={[
-                [`Items (${itemCount})`, `$${subtotal.toFixed(2)}`],
-                ['Shipping', shipping === 0 ? 'Free' : '$10.00'],
+                [`Items (${itemCount})`, formatPrice(subtotal)],
+                ['Shipping', shipping === 0 ? 'Free' : formatPrice(SHIPPING_COST)],
               ]}
-              total={['Subtotal', `$${subtotal.toFixed(2)}`]}
+              total={['Subtotal', formatPrice(subtotal)]}
               footerLink={
                 <Link to='/' className='cart-summary__continue'>
                   Continue Shopping

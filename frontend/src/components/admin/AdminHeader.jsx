@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
+import { formatPrice } from '../../utils/currencyUtils';
 
 const getPageMeta = (pathname) => {
   if (pathname.includes('/product/create')) return { title: 'Add Product', breadcrumb: 'Products / New' };
@@ -130,7 +131,7 @@ const AdminHeader = ({ onMenuOpen, isDark, onToggleTheme, onLogout }) => {
                   >
                     <strong>Order #{order._id.slice(-6)}</strong>
                     <div style={{ color: 'var(--admin-text-muted)', marginTop: 2 }}>
-                      {order.user?.name} · ${order.totalPrice}
+                      {order.user?.name} · {formatPrice(order.totalPrice)}
                     </div>
                   </Link>
                 ))

@@ -4,6 +4,7 @@ import { FaEye } from 'react-icons/fa';
 import Rating from './Rating';
 import ProductImage from './ProductImage';
 import WishlistButton from './WishlistButton';
+import { formatPrice } from '../utils/currencyUtils';
 
 const Product = ({ product }) => {
   return (
@@ -41,7 +42,7 @@ const Product = ({ product }) => {
         </div>
 
         <div className='product-card__footer'>
-          <div className='product-card__price'>${product.price}</div>
+          <div className='product-card__price'>{formatPrice(product.price)}</div>
           <div className='product-card__actions'>
             <Link
               to={`/product/${product._id}`}

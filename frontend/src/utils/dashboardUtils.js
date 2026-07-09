@@ -1,3 +1,5 @@
+import { formatPrice } from './currencyUtils';
+
 const MONTH_COUNT = 6;
 
 export const getMonthlyAnalytics = (orders = []) => {
@@ -95,7 +97,7 @@ export const getRecentActivity = (orders = [], limit = 6) => {
       id: `${order._id}-created`,
       type: 'order',
       message: `New order from ${order.user?.name || 'Customer'}`,
-      meta: `$${order.totalPrice.toFixed(2)}`,
+      meta: formatPrice(order.totalPrice),
       date: order.createdAt,
     });
     if (order.isPaid) {

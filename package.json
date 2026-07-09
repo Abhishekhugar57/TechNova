@@ -13,6 +13,7 @@
     "data:destroy": "node backend/seeder -d",
     "images:sync": "node backend/scripts/sync-product-images.js",
     "orders:migrate-tracking": "node backend/scripts/migrate-order-tracking.js",
+    "data:migrate-inr": "node backend/scripts/migrate-usd-to-inr.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "author": "Abhishek Hugar",

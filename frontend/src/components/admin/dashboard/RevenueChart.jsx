@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import { formatPrice } from '../../../utils/currencyUtils';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -27,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }) => {
       <p style={{ fontWeight: 700, margin: '0 0 8px', color: 'var(--admin-text)' }}>{label}</p>
       {payload.map((entry) => (
         <p key={entry.name} style={{ margin: '4px 0', color: entry.color }}>
-          {entry.name}: {entry.name === 'Revenue' ? `$${entry.value.toFixed(2)}` : entry.value}
+          {entry.name}: {entry.name === 'Revenue' ? formatPrice(entry.value) : entry.value}
         </p>
       ))}
     </div>
@@ -56,7 +57,7 @@ const RevenueChart = ({ data }) => (
               tick={{ fill: 'var(--admin-text-muted)', fontSize: 12 }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(v) => `$${v}`}
+              tickFormatter={(v) => formatPrice(v)}
             />
             <YAxis
               yAxisId='orders'

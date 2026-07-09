@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import TrackingStatusBadge from '../../TrackingStatusBadge';
+import { formatPrice } from '../../../utils/currencyUtils';
 
 const RecentOrdersWidget = ({ orders }) => (
   <div className='dash-card'>
@@ -36,7 +37,7 @@ const RecentOrdersWidget = ({ orders }) => (
             >
               {order.isPaid ? 'Paid' : 'Pending'}
             </span>
-            <span className='dash-list-item__value'>${order.totalPrice}</span>
+            <span className='dash-list-item__value'>{formatPrice(order.totalPrice)}</span>
           </Link>
         ))
       )}

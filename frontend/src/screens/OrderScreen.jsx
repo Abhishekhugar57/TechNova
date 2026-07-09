@@ -16,6 +16,7 @@ import OrderTrackingUpdate from '../components/admin/OrderTrackingUpdate';
 import TrackingStatusBadge from '../components/TrackingStatusBadge';
 import loadRazorpayScript from '../utils/loadRazorpay';
 import { isAdminUser } from '../utils/authUtils';
+import { formatPrice } from '../utils/currencyUtils';
 import { SITE_NAME } from '../constants/site';
 import {
   canCancelOrder,
@@ -231,10 +232,10 @@ const OrderScreen = () => {
                 <div className='flex-grow-1'>
                   <Link to={`/product/${item.product}`} className='fw-semibold'>{item.name}</Link>
                   <div className='text-muted-custom' style={{ fontSize: '0.875rem' }}>
-                    Qty: {item.qty} &times; ${item.price}
+                    Qty: {item.qty} &times; {formatPrice(item.price)}
                   </div>
                 </div>
-                <strong>${(item.qty * item.price).toFixed(2)}</strong>
+                <strong>{formatPrice(item.qty * item.price)}</strong>
               </div>
             ))}
           </div>
@@ -243,11 +244,11 @@ const OrderScreen = () => {
         <Col lg={4}>
           <OrderSummary
             rows={[
-              ['Items', `$${order.itemsPrice}`],
-              ['Shipping', `$${order.shippingPrice}`],
-              ['Tax', `$${order.taxPrice}`],
+              ['Items', formatPrice(order.itemsPrice)],
+              ['Shipping', formatPrice(order.shippingPrice)],
+              ['Tax', formatPrice(order.taxPrice)],
             ]}
-            total={['Total', `$${order.totalPrice}`]}
+            total={['Total', formatPrice(order.totalPrice)]}
           >
             {showRazorpayPayment && (
               <>

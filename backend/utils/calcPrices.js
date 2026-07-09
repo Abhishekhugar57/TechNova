@@ -1,3 +1,9 @@
+import {
+  FREE_SHIPPING_THRESHOLD,
+  SHIPPING_COST,
+  TAX_RATE,
+} from '../constants/pricing.js';
+
 function addDecimals(num) {
   return (Math.round(num * 100) / 100).toFixed(2);
 }
@@ -16,10 +22,11 @@ export function calcPrices(orderItems) {
   );
 
   // Calculate the shipping price
-  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const shippingPrice =
+    itemsPrice > FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
 
   // Calculate the tax price
-  const taxPrice = 0.15 * itemsPrice;
+  const taxPrice = TAX_RATE * itemsPrice;
 
   // Calculate the total price
   const totalPrice = itemsPrice + shippingPrice + taxPrice;

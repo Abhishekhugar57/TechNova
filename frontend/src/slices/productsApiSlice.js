@@ -32,7 +32,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'Products', id: 'LIST' }, { type: 'Products', id: 'CATEGORIES' }],
+      invalidatesTags: [{ type: 'Products', id: 'LIST' }, { type: 'Products', id: 'CATEGORIES' }, { type: 'Products', id: 'TOP' }],
     }),
     updateProduct: builder.mutation({
       query: (data) => ({
@@ -43,6 +43,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: (result, error, { productId }) => [
         { type: 'Products', id: 'LIST' },
         { type: 'Products', id: 'CATEGORIES' },
+        { type: 'Products', id: 'TOP' },
         { type: 'Product', id: productId },
       ],
     }),
@@ -58,7 +59,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         url: `${PRODUCTS_URL}/${productId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: [{ type: 'Products', id: 'LIST' }, { type: 'Products', id: 'CATEGORIES' }],
+      invalidatesTags: [{ type: 'Products', id: 'LIST' }, { type: 'Products', id: 'CATEGORIES' }, { type: 'Products', id: 'TOP' }],
     }),
     createReview: builder.mutation({
       query: (data) => ({
@@ -70,6 +71,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         { type: 'Product', id: productId },
         { type: 'Product', id: `${productId}-review-eligibility` },
         { type: 'Products', id: 'LIST' },
+        { type: 'Products', id: 'TOP' },
       ],
     }),
     getReviewEligibility: builder.query({

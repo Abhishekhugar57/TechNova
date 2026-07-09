@@ -10,6 +10,7 @@ const ProductImage = ({
   className = '',
   width = 800,
   height = 800,
+  loading = 'lazy',
   ...props
 }) => {
   const [imgSrc, setImgSrc] = useState(() => normalizeProductImage(src));
@@ -31,7 +32,7 @@ const ProductImage = ({
       className={`product-image ${className}`.trim()}
       width={width}
       height={height}
-      loading='lazy'
+      loading={loading}
       decoding='async'
       onError={handleError}
       {...props}

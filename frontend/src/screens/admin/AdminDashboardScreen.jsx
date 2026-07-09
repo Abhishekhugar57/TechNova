@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { FaBox, FaShoppingBag, FaUsers, FaDollarSign } from 'react-icons/fa';
+import { FaBox, FaShoppingBag, FaUsers, FaRupeeSign } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
 import { useGetProductsQuery } from '../../slices/productsApiSlice';
@@ -24,6 +24,7 @@ import {
   getLowStockProducts,
   getGrowthPercent,
 } from '../../utils/dashboardUtils';
+import { formatPrice } from '../../utils/currencyUtils';
 
 const RevenueChart = lazy(() => import('../../components/admin/dashboard/RevenueChart'));
 
@@ -70,10 +71,10 @@ const AdminDashboardScreen = () => {
           <StatCard
             variant='revenue'
             label='Total Revenue'
-            value={`$${totalRevenue.toFixed(2)}`}
+            value={formatPrice(totalRevenue)}
             growth={revenueGrowth}
             growthLabel='vs last 30 days'
-            icon={FaDollarSign}
+            icon={FaRupeeSign}
           />
           <StatCard
             variant='orders'

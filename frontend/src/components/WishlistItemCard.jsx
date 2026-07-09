@@ -7,6 +7,7 @@ import Rating from './Rating';
 import WishlistButton from './WishlistButton';
 import { addToCart } from '../slices/cartSlice';
 import { useRemoveFromWishlistMutation } from '../slices/wishlistApiSlice';
+import { formatPrice } from '../utils/currencyUtils';
 
 const WishlistItemCard = ({ item }) => {
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ const WishlistItemCard = ({ item }) => {
 
         <div className='wishlist-card__footer'>
           <div className='wishlist-card__price-row'>
-            <span className='wishlist-card__price'>${product.price}</span>
+            <span className='wishlist-card__price'>{formatPrice(product.price)}</span>
             {!outOfStock && (
               <span className='badge-pill badge-pill--success wishlist-card__in-stock'>
                 In Stock

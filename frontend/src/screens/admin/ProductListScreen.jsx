@@ -12,6 +12,7 @@ import {
   useDeleteProductMutation,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
+import { formatPrice } from '../../utils/currencyUtils';
 
 const ProductListScreen = () => {
   const { pageNumber } = useParams();
@@ -81,7 +82,7 @@ const ProductListScreen = () => {
                         <span className='fw-semibold'>{product.name}</span>
                       </div>
                     </td>
-                    <td className='fw-semibold'>${product.price}</td>
+                    <td className='fw-semibold'>{formatPrice(product.price)}</td>
                     <td>{product.category}</td>
                     <td>{product.brand}</td>
                     <td>{product.countInStock}</td>

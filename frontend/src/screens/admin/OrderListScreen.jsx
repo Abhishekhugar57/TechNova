@@ -6,6 +6,7 @@ import TableSkeleton from '../../components/ui/TableSkeleton';
 import AdminToolbar from '../../components/ui/AdminToolbar';
 import { useGetOrdersQuery } from '../../slices/ordersApiSlice';
 import TrackingStatusBadge from '../../components/TrackingStatusBadge';
+import { formatPrice } from '../../utils/currencyUtils';
 
 const OrderListScreen = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
@@ -54,7 +55,7 @@ const OrderListScreen = () => {
                     </td>
                     <td>{order.user?.name}</td>
                     <td>{order.createdAt.substring(0, 10)}</td>
-                    <td className='fw-semibold'>${order.totalPrice}</td>
+                    <td className='fw-semibold'>{formatPrice(order.totalPrice)}</td>
                     <td>
                       <TrackingStatusBadge status={order.trackingStatus} />
                     </td>

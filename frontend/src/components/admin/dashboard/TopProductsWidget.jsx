@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import ProductImage from '../../ProductImage';
+import { formatPrice } from '../../../utils/currencyUtils';
 
 const TopProductsWidget = ({ products }) => (
   <div className='dash-card'>
@@ -18,7 +19,7 @@ const TopProductsWidget = ({ products }) => (
               <div className='dash-list-item__title'>{product.name}</div>
               <div className='dash-list-item__meta'>{product.qty} units sold</div>
             </div>
-            <span className='dash-list-item__value'>${product.revenue.toFixed(2)}</span>
+            <span className='dash-list-item__value'>{formatPrice(product.revenue)}</span>
           </div>
         ))
       )}

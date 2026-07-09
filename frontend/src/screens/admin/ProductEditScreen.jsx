@@ -96,7 +96,7 @@ const ProductEditScreen = () => {
               <Form.Control type='text' className='form-control-modern' value={name} onChange={(e) => setName(e.target.value)} />
             </Form.Group>
             <Form.Group controlId='price' className='mb-3'>
-              <Form.Label>Price</Form.Label>
+              <Form.Label>Price (₹)</Form.Label>
               <Form.Control type='number' className='form-control-modern' value={price} onChange={(e) => setPrice(e.target.value)} />
             </Form.Group>
             <Form.Group controlId='image' className='mb-3'>

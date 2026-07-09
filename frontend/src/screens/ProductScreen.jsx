@@ -24,6 +24,7 @@ import ProductGrid from '../components/ui/ProductGrid';
 import WishlistButton from '../components/WishlistButton';
 import { addToCart } from '../slices/cartSlice';
 import { isAdminUser } from '../utils/authUtils';
+import { formatPrice } from '../utils/currencyUtils';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -217,7 +218,7 @@ const ProductScreen = () => {
               <div className='my-2'>
                 <Rating value={product.rating} text={`${product.numReviews} reviews`} />
               </div>
-              <div className='product-detail__price my-3'>${product.price}</div>
+              <div className='product-detail__price my-3'>{formatPrice(product.price)}</div>
               <p className='product-detail__description'>{product.description}</p>
 
               <div className='my-3'>

@@ -86,7 +86,7 @@ const ProductCreateScreen = () => {
           </Form.Group>
 
           <Form.Group controlId='price' className='mb-3'>
-            <Form.Label>Price ($)</Form.Label>
+            <Form.Label>Price (₹)</Form.Label>
             <Form.Control
               type='number'
               min='0'

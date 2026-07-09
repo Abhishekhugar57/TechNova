@@ -83,7 +83,7 @@ img {
   padding: var(--space-3) 0;
 }
 
-.hero-section + .page-section {
+.hero-wrapper + .page-section {
   padding-top: var(--space-3);
 }
 

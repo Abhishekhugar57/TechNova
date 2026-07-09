@@ -52,7 +52,6 @@ MONGO_URI=<your_mongo_db_uri>
 JWT_SECRET=<your_secret>
 RAZORPAY_KEY_ID=<your_razorpay_key_id>
 RAZORPAY_KEY_SECRET=<your_razorpay_key_secret>
-RAZORPAY_USD_TO_INR_RATE=84
 ADMIN_NAME=Admin User
 ADMIN_EMAIL=admin@email.com
 ADMIN_PASSWORD=<secure_admin_password>
@@ -84,6 +83,14 @@ NODE_ENV=production npm start
 ```bash
 npm run data:import
 ```
+
+**Migrate existing USD prices to INR (if upgrading an existing database):**
+
+```bash
+npm run data:migrate-inr
+```
+
+All prices are stored and displayed in Indian Rupees (INR) using a fixed conversion rate of 1 USD = ₹86.
 
 **Remove seeded data:**
 

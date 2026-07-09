@@ -223,10 +223,10 @@ const createProductReview = asyncHandler(async (req, res) => {
 // @route   GET /api/products/top
 // @access  Public
 const getTopProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({})
+  const products = await Product.find({ category: { $ne: 'Cameras' } })
     .select(TOP_PRODUCT_FIELDS)
     .sort({ rating: -1 })
-    .limit(3)
+    .limit(5)
     .lean();
 
   res.json(products);
